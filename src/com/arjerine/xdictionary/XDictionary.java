@@ -12,14 +12,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
-public class XDictionary implements IXposedHookLoadPackage {
+public class XDictionary implements IXposedHookLoadPackage,IXposedHookZygoteInit{
 
+	XSharedPreferences pref;
+	
 	private boolean shouldWindowFocusWait;
 	private TextView cTextView;
 	private Context tvContext;
@@ -35,6 +38,12 @@ public class XDictionary implements IXposedHookLoadPackage {
 	private static Drawable htcDrawable;
 	private boolean htcAdded = false;
 
+	@Override
+	public void initZygote(StartupParam startupParam) throws Throwable {
+    	pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
+		
+	}
+	
 	public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
              
 		
@@ -221,8 +230,6 @@ public class XDictionary implements IXposedHookLoadPackage {
 
         
         private int Text(TextView cTextView) {
-        	XSharedPreferences pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
-
             int text = Integer.parseInt(pref.getString("displayModeVal", "0"));
             return text;
         }
@@ -269,6 +276,8 @@ public class XDictionary implements IXposedHookLoadPackage {
                 }
     	    }
         };
+
+		
 	
 	
 	
