@@ -1,0 +1,18 @@
+<resources>
+
+    <string name="app_name">Text Xposed</string>
+    <string name="xposed_desc">Select text for a quick definition, to search using browser or to share!</string>
+    
+    <string name="button_define">Define</string>
+    <string name="button_share">Share</string>
+    <string name="button_search">Search</string>    
+    <string name="text_share">Share using</string>
+    
+    <string name="dictionary_setting">Configure Dictionary</string>
+    <string name="dictionary_setting_summary">Choose how to display the definition</string>
+    <string name="test_dict">Select this to test</string>
+    <string name="browser">Browser</string>
+    <string name="popup">Pop-up</string>
+    <string name="toast">Toast</string>
+
+</resources>
