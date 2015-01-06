@@ -79,7 +79,7 @@ public class CopyTask extends AsyncTask<Void, Void, Boolean> {
 
 	protected void onPostExecute(Boolean result) {
 		if (result) {
-			Toast.makeText(c, "Dictionary data created!", Toast.LENGTH_LONG).show();
+			Toast.makeText(c, "Dictionary data copied!", Toast.LENGTH_LONG).show();
 		}
 	}
 
