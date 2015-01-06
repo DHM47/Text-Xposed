@@ -5,7 +5,6 @@
 	<classpathentry kind="lib" path="libs/edu.mit.jwi_2.3.3.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="lib" path="/home/arjun/dev/android/projects/.files/XposedBridgeApi-54.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
