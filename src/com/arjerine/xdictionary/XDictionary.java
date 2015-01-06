@@ -11,6 +11,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
@@ -252,6 +253,7 @@ public class XDictionary implements IXposedHookLoadPackage,IXposedHookZygoteInit
         	@Override
         	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
         		MenuItem item = (MenuItem) param.args[1];
+        		
     		
         		if (item.getItemId()==id1) {
 					
