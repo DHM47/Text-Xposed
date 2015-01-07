@@ -2,6 +2,9 @@ package com.arjerine.textxposed;
 
 
 import com.arjerine.textxposed.R;
+import com.arjerine.xdictionary.BrowserDisp;
+import com.arjerine.xdictionary.PopupDisp;
+import com.arjerine.xdictionary.ToastDisp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,27 +20,48 @@ import android.view.View.OnClickListener;
 import android.view.View;
 import android.widget.TextView;
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
+import de.robv.android.xposed.IXposedHookZygoteInit.StartupParam;
+import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 
-public class Xposed implements IXposedHookLoadPackage {
+public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	
 	private boolean shouldWindowFocusWait;
 	private TextView cTextView;
 	private Context tvContext;	
 	
 	static Menu menu;
+	final int id1 = 45;
 	final int id2 = 46;
 	final int id3 = 47;
 	
+	PopupDisp p;
+	BrowserDisp b;
+	ToastDisp t;
+	
 	private StringBuffer url;
+	
+	XSharedPreferences pref;
 	
 	private static Object htcObject;
 	private static Drawable htcDrawable;
 	private boolean htcAdded = false;
+	
+	
+	
+	
+	@Override
+	public void initZygote(StartupParam startupParam) throws Throwable {
+    	pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
+		
+	}
+	
 	
 	
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
@@ -206,7 +230,10 @@ public class Xposed implements IXposedHookLoadPackage {
              
              
         private void menuButtons(Menu menu) {
-			  
+        	
+            menu.add(android.view.Menu.NONE, id1, android.view.Menu.NONE, ResourceHelper.getOwnString(tvContext, R.string.button_define));
+            menu.findItem(id1).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        	
 	        menu.add(android.view.Menu.NONE, id2, android.view.Menu.NONE, ResourceHelper.getOwnString(tvContext,R.string.button_search));
 	        menu.findItem(id2).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 	        
@@ -222,6 +249,13 @@ public class Xposed implements IXposedHookLoadPackage {
 		    int endSelection = cTextView.getSelectionEnd();                                     
 		    String textSelection = cTextView.getText().subSequence(startSelection, endSelection).toString();
 		    return textSelection;
+        }
+        
+        
+               
+        private int Text(TextView cTextView) {
+            int text = Integer.parseInt(pref.getString("displayModeVal", "2"));
+            return text;
         }
         
         
@@ -265,17 +299,34 @@ public class Xposed implements IXposedHookLoadPackage {
         		MenuItem item = (MenuItem) param.args[1];
         		
         		switch(item.getItemId()) {
+        		   
+        		case id1:
+        			     switch (Text(cTextView)) {
+   					     case 1:
+   						        b = new BrowserDisp(textSelect(cTextView), tvContext);
+   					            b.show();
+   						        break;
+
+   					     case 2:
+   						        p = new PopupDisp(textSelect(cTextView), tvContext);
+   						        p.show();
+   						        break;
+
+   					     case 3:
+   						        t = new ToastDisp(textSelect(cTextView), tvContext);
+   						        t.show();
+   						        break;
+   					     }
+        			     break;
 	               
-	               case id2:
-	            	        Search(tvContext);
-	     		            break;
-	               case id3:
-	            	        Share(tvContext);
-	            	        break; 	        
+	            case id2:
+	            	     Search(tvContext);
+	     		         break;
+	            case id3:
+	            	     Share(tvContext);
+	            	     break; 	        
 	            }
         	}
-        };
-             
-             
+        };    
              
 }
