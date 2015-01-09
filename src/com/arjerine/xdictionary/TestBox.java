@@ -20,11 +20,11 @@ public class TestBox extends Preference {
 	@Override
 	protected View onCreateView(ViewGroup parent) {
 		TextView tv = new TextView(this.getContext());
-		tv.setPadding(0,30,0,30);
+		tv.setPadding(0,20,0,20);
 		tv.setText(test);
 		tv.setGravity(Gravity.CENTER);
 		tv.setTextIsSelectable(true);
-		tv.setTextSize(15);
+		tv.setTextSize(17);
 		
 		return tv;
 	}

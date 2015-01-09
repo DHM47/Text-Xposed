@@ -6,7 +6,7 @@
         <item name="@string/toast">Toast</item>
     </string-array>
     
-        <string-array name="displayVals">
+    <string-array name="displayVals">
         <item>1</item>
         <item>2</item>
         <item>3</item>
