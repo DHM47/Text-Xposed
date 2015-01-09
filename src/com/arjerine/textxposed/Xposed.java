@@ -25,8 +25,6 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
-import de.robv.android.xposed.IXposedHookZygoteInit.StartupParam;
-import de.robv.android.xposed.XC_MethodHook.MethodHookParam;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 
@@ -45,8 +43,10 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	
 	XSharedPreferences pref;
 	
-	private static Object htcObject;
-	private static Drawable htcDrawable;
+	private Object htcObject;
+	private Drawable htcDrawableShare;
+	private Drawable htcDrawableSearch;
+	private Drawable htcDrawableDefine;
 	private boolean htcAdded = false;
 	
 	
@@ -81,17 +81,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		    	 
 		     
 		     XposedHelpers.findAndHookMethod("android.widget.Editor", lpparam.classLoader, "onWindowFocusChanged", 
-		    		                                                    boolean.class, new XC_MethodHook() {
-		        
-		         @Override
-				    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {	        	    
-		    		    if (shouldWindowFocusWait) {
-		    		    	      param.setResult(null);
-		    		    	      return;
-		    		    	      
-		    		    }	    		    
-		    	    }
-		     });
+		    		                                                    boolean.class, onWindowFocusChanged);
 		     
 		    		 
 
@@ -99,87 +89,46 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		    		                       "onCreateActionMode", ActionMode.class, Menu.class, onCreateHook);   
 		     	
 		     
-		     
 		     XposedHelpers.findAndHookMethod("android.widget.Editor.SelectionActionModeCallback", lpparam.classLoader, 
-		                           "onPrepareActionMode", ActionMode.class, Menu.class, new XC_MethodHook() {
-		    	  
-		    	 @Override
-		    	    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-		    	      shouldWindowFocusWait = true;
-		    	    }     
-		     });   
-		     
+		                           "onPrepareActionMode", ActionMode.class, Menu.class, onPrepareActionMode);   
 		     
 		    
 		     XposedHelpers.findAndHookMethod("android.widget.Editor.SelectionActionModeCallback", lpparam.classLoader,
 		     		             "onActionItemClicked", ActionMode.class, MenuItem.class, onItemClickedHook);
 		       
 		     
-		     
 		     XposedHelpers.findAndHookMethod("android.widget.Editor.SelectionActionModeCallback", lpparam.classLoader, 
-                                               "onDestroyActionMode", ActionMode.class, new XC_MethodHook() {
-	  
-	             @Override
-	                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-	                    shouldWindowFocusWait = false;	            
-	                }     
-             });
+                                               "onDestroyActionMode", ActionMode.class, onDestroyActionMode);
 		     
 		     
 		     } else { //IceCreamSandwich
 		    	 
 		    	 
 		     XposedHelpers.findAndHookMethod("android.widget.TextView", lpparam.classLoader, "onWindowFocusChanged", 
-                                                                         boolean.class, new XC_MethodHook() {
-
-                 @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {	        	    
-                        if (shouldWindowFocusWait) {
-                                  param.setResult(null);
-                                  return;
-
-                        }	    		    
-                    }
-             });
-
+                                                                         boolean.class, onWindowFocusChanged);
 
 
              XposedHelpers.findAndHookMethod("android.widget.TextView.SelectionActionModeCallback", lpparam.classLoader, 
                                            "onCreateActionMode", ActionMode.class, Menu.class, onCreateHook);   
 
 
-
              XposedHelpers.findAndHookMethod("android.widget.TextView.SelectionActionModeCallback", lpparam.classLoader, 
-                                   "onPrepareActionMode", ActionMode.class, Menu.class, new XC_MethodHook() {
-
-                 @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        shouldWindowFocusWait = true;
-                    }     
-             });   
-
+                                   "onPrepareActionMode", ActionMode.class, Menu.class, onPrepareActionMode);   
 
 
              XposedHelpers.findAndHookMethod("android.widget.TextView.SelectionActionModeCallback", lpparam.classLoader,
                                  "onActionItemClicked", ActionMode.class, MenuItem.class, onItemClickedHook);
 
 
-
              XposedHelpers.findAndHookMethod("android.widget.TextView.SelectionActionModeCallback", lpparam.classLoader, 
-                                               "onDestroyActionMode", ActionMode.class, new XC_MethodHook() {
-
-                 @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        shouldWindowFocusWait = false;	            
-                    }     
-             });
+                                               "onDestroyActionMode", ActionMode.class, onDestroyActionMode);
 		    	  
 		     }
 	     
 	
 		     
 	         // HTC Compatibility
-		     /*
+		     
              if (Build.MANUFACTURER.toLowerCase().contains("htc")) {
             	 
     	         XposedHelpers.findAndHookMethod("com.htc.quickselection.HtcQuickSelectionWindow", lpparam.classLoader, 
@@ -188,28 +137,48 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     	        	 @Override
     	        	    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
     	        		    String hString = (String) param.args[3];
-    	        		    TextView hTextView = (TextView) param.args[0];
-    	        		    final Context hContext = hTextView.getContext();
-	        		    	htcObject = param.args[0];
-	        		    	htcDrawable = (Drawable) param.args[1];
+    	        		    //TextView hTextView = (TextView) param.args[0];  How did you know this ?
+    	        		    //final Context hContext = hTextView.getContext();
 	        		    	
-    	        		    if (Resources.getSystem().getString(android.R.string.paste).equals(hString) && !htcAdded) {
+	        		    	
+    	        		    if (Resources.getSystem().getString(android.R.string.copy).equals(hString) && !htcAdded) {//Use Copy because paste is not always available. 
     	        		    	htcAdded=true;
+    	        		    	htcObject = param.args[0];
     	        		    	
-    	        		    	View.OnClickListener mClick = new OnClickListener() {
+    	        		    	htcDrawableDefine=ResourceHelper.getOwnDrawable(tvContext, R.drawable.define);
+    	        		    	htcDrawableSearch=ResourceHelper.getOwnDrawable(tvContext, R.drawable.search);
+    	        		    	htcDrawableShare =ResourceHelper.getOwnDrawable(tvContext, R.drawable.share );
+    	        		    	
+    	        		    	View.OnClickListener mClickDefine = new OnClickListener() {
     	        		    		@Override
     	        		    		public void onClick(View v) {
-    	        		    			Search(hContext);
+    	        		    			define(tvContext, cTextView);
     	        		    		}
     	        		    	};
-    	        		    	Object[] args = {htcObject,htcDrawable,mClick,"ClipBoard"};
+    	        		    	View.OnClickListener mClickSearch = new OnClickListener() {
+    	        		    		@Override
+    	        		    		public void onClick(View v) {
+    	        		    			search(tvContext, cTextView);
+    	        		    		}
+    	        		    	};
+    	        		    	View.OnClickListener mClickShare = new OnClickListener() {
+    	        		    		@Override
+    	        		    		public void onClick(View v) {
+    	        		    			share(tvContext, cTextView);
+    	        		    		}
+    	        		    	};
+    	        		    	Object[] argsDefine = {htcObject,htcDrawableDefine,mClickDefine,ResourceHelper.getOwnString(tvContext,R.string.button_define)};
+    	        		    	Object[] argsSearch = {htcObject,htcDrawableSearch,mClickSearch,ResourceHelper.getOwnString(tvContext,R.string.button_search)};
+    	        		    	Object[] argsShare  = {htcObject,htcDrawableShare ,mClickShare ,ResourceHelper.getOwnString(tvContext,R.string.button_share)};
 								try {
-									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, args);
+									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsDefine);
+									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsSearch);
+									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsShare );
 								} catch (Exception e) {
 									XposedBridge.log(e);
 								  }
 								
-							}else if(Resources.getSystem().getString(android.R.string.paste).equals(hString)){
+							}else if(Resources.getSystem().getString(android.R.string.copy).equals(hString)){
 								  htcAdded=false;
     	        		    }
 
@@ -219,7 +188,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 					
 					
              }  
-	      */
+	      
 	
     }
              
@@ -268,7 +237,22 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
               context.startActivity(Intent.createChooser(share, ResourceHelper.getOwnString(context,R.string.text_share)));
     }  
         
-        
+    private void define(Context context, TextView textView) {			
+    	switch (choice(cTextView)) {
+		      case 1:
+			         BrowserDisp b = new BrowserDisp(TextSelect.selectedText(cTextView), tvContext);
+		             b.show();
+			         break;
+		      case 2:
+		    	  	 PopupDisp p = new PopupDisp(TextSelect.selectedText(cTextView), tvContext);
+		    	  	 p.show();
+		    	  	 break;       
+		      case 3:
+		    	  	 ToastDisp t = new ToastDisp(TextSelect.selectedText(cTextView), tvContext);
+		    	  	 t.show();
+		    	  	 break;
+		      }
+    }    
         
     XC_MethodHook onCreateHook = new XC_MethodHook() {      	
         	 @Override
@@ -278,7 +262,14 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
            	 }	
     };
         
-        
+    
+    XC_MethodHook onPrepareActionMode = new XC_MethodHook() {
+  	  
+   	 @Override
+   	    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+   	      shouldWindowFocusWait = true;
+   	    }     
+    };
         
     XC_MethodHook onItemClickedHook = new XC_MethodHook() {  	
         	 @Override
@@ -288,20 +279,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
         		 switch(item.getItemId()) {
         		   
         		 case id1:
-        			      switch (choice(cTextView)) {
-   					      case 1:
-   						         BrowserDisp b = new BrowserDisp(TextSelect.selectedText(cTextView), tvContext);
-   					             b.show();
-   						         break;
-   					      case 2:
-						         PopupDisp p = new PopupDisp(TextSelect.selectedText(cTextView), tvContext);
-						         p.show();
-						         break;       
-   					      case 3:
-						         ToastDisp t = new ToastDisp(TextSelect.selectedText(cTextView), tvContext);
-						         t.show();
-						         break;
-   					      }
+        			      define(tvContext, cTextView);
         			      break;
 	               
 	             case id2:
@@ -313,5 +291,25 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	            }
         	}
     };    
+    
+    XC_MethodHook onDestroyActionMode = new XC_MethodHook() {
+
+        @Override
+           protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+               shouldWindowFocusWait = false;	            
+           }     
+    };
+    
+    XC_MethodHook onWindowFocusChanged = new XC_MethodHook() {
+        
+        @Override
+		    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {	        	    
+   		    if (shouldWindowFocusWait) {
+   		    	      param.setResult(null);
+   		    	      return;
+   		    	      
+   		    }	    		    
+   	    }
+    };
              
 }
