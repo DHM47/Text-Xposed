@@ -22,7 +22,7 @@ public class ModeArrayAdapter extends ArrayAdapter<CharSequence> {
 	LayoutInflater mInflater;
 	CharSequence[] mEntries;
 
-	public ModeArrayAdapter(Context context, int resource,CharSequence[] objects) {
+	public ModeArrayAdapter(Context context, int resource, CharSequence[] objects) {
 		super(context, resource, objects);
 
 		mInflater = LayoutInflater.from(context);
