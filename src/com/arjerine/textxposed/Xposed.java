@@ -34,16 +34,12 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	
 	private boolean shouldWindowFocusWait;
 	private TextView cTextView;
-	private Context tvContext;	
+	private Context tvContext;
 	
 	static Menu menu;
-	final int id1 = 45;
-	final int id2 = 46;
+	final int id1 = 45; 
+	final int id2 = 46; 
 	final int id3 = 47;
-	
-	PopupDisp p;
-	BrowserDisp b;
-	ToastDisp t;
 	
 	private StringBuffer url;
 	
@@ -55,10 +51,9 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	
 	
 	
-	
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
-    	pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
+    	     pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
 		
 	}
 	
@@ -229,104 +224,94 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     }
              
              
-        private void menuButtons(Menu menu) {
+    private void menuButtons(Menu menu) {
         	
-            menu.add(android.view.Menu.NONE, id1, android.view.Menu.NONE, ResourceHelper.getOwnString(tvContext, R.string.button_define));
-            menu.findItem(id1).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
-        	
-	        menu.add(android.view.Menu.NONE, id2, android.view.Menu.NONE, ResourceHelper.getOwnString(tvContext,R.string.button_search));
-	        menu.findItem(id2).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+              menu.add(android.view.Menu.NONE, id1, android.view.Menu.NONE, ResourceHelper.getOwnString(tvContext, R.string.button_define));
+              menu.findItem(id1).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+        	 
+	          menu.add(android.view.Menu.NONE, id2, android.view.Menu.NONE, ResourceHelper.getOwnString(tvContext,R.string.button_search));
+	          menu.findItem(id2).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
 	        
-	        menu.add(android.view.Menu.NONE, id3, android.view.Menu.NONE, ResourceHelper.getOwnString(tvContext,R.string.button_share));
-	        menu.findItem(id3).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);  
+	          menu.add(android.view.Menu.NONE, id3, android.view.Menu.NONE, ResourceHelper.getOwnString(tvContext,R.string.button_share));
+	          menu.findItem(id3).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);  
+         	
+    }
+        
+        
+        
+    private int choice(TextView textView) {
+    	      int choice = Integer.parseInt(pref.getString("displayModeVal", "0"));
+              return choice;
+    }
+    
+    
+    
+    
+    
+    
+    
+    private void search(Context context, TextView textView) {     	
+        	  url = new StringBuffer();
+              url.append("https://www.google.com/search?q=");
+              url.append(TextSelect.selectedText(cTextView));
         	
-        }
+        	  Intent search = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
+              context.startActivity(search);	            
+    }
+      
+
+
+    private void share(Context context, TextView textView) {			
+        	  Intent share = new Intent(Intent.ACTION_SEND);
+              share.setType("text/plain");
+              share.putExtra(android.content.Intent.EXTRA_TEXT, TextSelect.selectedText(cTextView));
+              context.startActivity(Intent.createChooser(share, ResourceHelper.getOwnString(context,R.string.text_share)));
+    }  
         
         
         
-        private String textSelect(TextView cTextView) {
-        	int startSelection = cTextView.getSelectionStart();
-		    int endSelection = cTextView.getSelectionEnd();                                     
-		    String textSelection = cTextView.getText().subSequence(startSelection, endSelection).toString();
-		    return textSelection;
-        }
-        
-        
-               
-        private int Text(TextView cTextView) {
-            int text = Integer.parseInt(pref.getString("displayModeVal", "2"));
-            return text;
-        }
+    XC_MethodHook onCreateHook = new XC_MethodHook() {      	
+        	 @Override
+        	 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+        		 menu = (Menu) param.args[1];
+        		 menuButtons(menu);
+           	 }	
+    };
         
         
         
-        private void Search(Context tvContext) {
-        	url = new StringBuffer();
-            url.append("https://www.google.com/search?q=");
-            url.append(textSelect(cTextView));
-        	
-        	Intent search = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
-            tvContext.startActivity(search);
-	            
-        }
-        
-        
-        
-        private void Share(Context tvContext) {
-        	Intent share = new Intent(Intent.ACTION_SEND);
-            share.setType("text/plain");
-            share.putExtra(android.content.Intent.EXTRA_TEXT, textSelect(cTextView));
-            tvContext.startActivity(Intent.createChooser(share, ResourceHelper.getOwnString(tvContext,R.string.text_share)));
-        }
-        
-        
-        
-        XC_MethodHook onCreateHook = new XC_MethodHook() {
-        	
-        	@Override
-        	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-        		menu = (Menu) param.args[1];
-        		menuButtons(menu);
-        	}	
-        };
-        
-        
-        
-        XC_MethodHook onItemClickedHook = new XC_MethodHook() {
-        	
-        	@Override
-        	protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-        		MenuItem item = (MenuItem) param.args[1];
+    XC_MethodHook onItemClickedHook = new XC_MethodHook() {  	
+        	 @Override
+        	 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+        		 MenuItem item = (MenuItem) param.args[1];
         		
-        		switch(item.getItemId()) {
+        		 switch(item.getItemId()) {
         		   
-        		case id1:
-        			     switch (Text(cTextView)) {
-   					     case 1:
-   						        b = new BrowserDisp(textSelect(cTextView), tvContext);
-   					            b.show();
-   						        break;
-
-   					     case 2:
-   						        p = new PopupDisp(textSelect(cTextView), tvContext);
-   						        p.show();
-   						        break;
-
-   					     case 3:
-   						        t = new ToastDisp(textSelect(cTextView), tvContext);
-   						        t.show();
-   						        break;
-   					     }
-        			     break;
+        		 case id1:
+        			      switch (choice(cTextView)) {
+   					      case 1:
+   						         BrowserDisp b = new BrowserDisp(TextSelect.selectedText(cTextView), tvContext);
+   					             b.show();
+   						         break;
+   					      case 2:
+						         PopupDisp p = new PopupDisp(TextSelect.selectedText(cTextView), tvContext);
+						         p.show();
+						         break;       
+   					      case 3:
+						         ToastDisp t = new ToastDisp(TextSelect.selectedText(cTextView), tvContext);
+						         t.show();
+						         break;
+   					      }
+        			      break;
 	               
-	            case id2:
-	            	     Search(tvContext);
-	     		         break;
-	            case id3:
-	            	     Share(tvContext);
-	            	     break; 	        
+	             case id2:
+	            	      search(tvContext, cTextView);
+	     		          break;
+	             case id3:
+	            	      share(tvContext, cTextView);
+	            	      break; 	        
 	            }
         	}
-        };    
+    };    
              
 }

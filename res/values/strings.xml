@@ -8,8 +8,11 @@
     <string name="button_search">Search</string>    
     <string name="text_share">Share using</string>
     
-    <string name="dictionary_setting">Configure Dictionary</string>
-    <string name="dictionary_setting_summary">Needs a reboot to take effect</string>
+    
+    <string name="dictionary">Dictionary</string>
+    <string name="dictionary_display">Display</string>
+    <string name="dictionary_display_summary">Needs a reboot to take effect</string>
+    <string name="test">Test</string>
     <string name="test_dict">Select this to test</string>
     <string name="browser">Browser</string>
     <string name="popup">Pop-up</string>

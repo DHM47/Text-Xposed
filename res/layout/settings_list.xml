@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    
+    <PreferenceCategory
+        android:key="Dictionary"
+        android:title="@string/dictionary" >
         
         <com.arjerine.xdictionary.DemoListPreference
             android:key="displayModeVal"
             android:entries="@array/displayMode"
-            android:summary="@string/dictionary_setting_summary"
+            android:summary="@string/dictionary_display_summary"
             android:entryValues="@array/displayVals"
-            android:title="@string/dictionary_setting" />
+            android:title="@string/dictionary_display" />
+    </PreferenceCategory>
         
+    <PreferenceCategory    
+        android:key="Test"
+        android:title="@string/test" >
         
         <com.arjerine.xdictionary.TestBox
             text="@string/test_dict"
             android:key="test_dict" />
+    </PreferenceCategory>
         
 </PreferenceScreen>
