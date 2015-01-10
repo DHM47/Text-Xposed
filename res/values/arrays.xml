@@ -12,5 +12,15 @@
         <item>3</item>
     </string-array>
     
-
+    <string-array name="toastMode">
+        <item name="@string/toast1">3 Seconds</item>
+        <item name="@string/toast2">6 Seconds</item>
+        <item name="@string/toast3">10 Seconds</item>
+    </string-array>
+    
+    <string-array name="toastVals">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 </resources>

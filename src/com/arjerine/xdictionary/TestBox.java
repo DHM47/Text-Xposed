@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class TestBox extends Preference {
@@ -19,14 +20,12 @@ public class TestBox extends Preference {
 	
 	@Override
 	protected View onCreateView(ViewGroup parent) {
-		TextView tv = new TextView(this.getContext());
-		tv.setPadding(0,20,0,20);
-		tv.setText(test);
-		tv.setGravity(Gravity.CENTER);
-		tv.setTextIsSelectable(true);
-		tv.setTextSize(17);
+		EditText et = new EditText(this.getContext());
+		et.setPadding(0,20,0,20);
+		et.setText(test);
+		et.setGravity(Gravity.CENTER);
 		
-		return tv;
+		return et;
 	}
 
 }

@@ -42,6 +42,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	private StringBuffer url;
 	
 	XSharedPreferences pref;
+	XSharedPreferences prefReboot;
 	
 	private Object htcObject;
 	private Drawable htcDrawableShare;
@@ -60,8 +61,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	
 	
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
-		
-		  
+    	
 		     XposedHelpers.findAndHookMethod(TextView.class, "onFocusChanged", boolean.class, int.class, Rect.class, 
 		    		                                                                   new XC_MethodHook() {
 	    	                      
@@ -167,13 +167,17 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     	        		    			share(tvContext, cTextView);
     	        		    		}
     	        		    	};
+    	        		    	
+    	        		    	
     	        		    	Object[] argsDefine = {htcObject,htcDrawableDefine,mClickDefine,ResourceHelper.getOwnString(tvContext,R.string.button_define)};
     	        		    	Object[] argsSearch = {htcObject,htcDrawableSearch,mClickSearch,ResourceHelper.getOwnString(tvContext,R.string.button_search)};
     	        		    	Object[] argsShare  = {htcObject,htcDrawableShare ,mClickShare ,ResourceHelper.getOwnString(tvContext,R.string.button_share)};
-								try {
+								
+    	        		    	try {
 									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsDefine);
 									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsSearch);
 									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsShare );
+									
 								} catch (Exception e) {
 									XposedBridge.log(e);
 								  }
@@ -181,15 +185,9 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 							}else if(Resources.getSystem().getString(android.R.string.copy).equals(hString)){
 								  htcAdded=false;
     	        		    }
-
     	        	    }  
-                 });
-		     
-					
-					
-             }  
-	      
-	
+                 });				
+             }
     }
              
              
@@ -213,9 +211,41 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
               return choice;
     }
     
+    private int duration(TextView textView) {
+	          int duration = Integer.parseInt(pref.getString("toastModeVal", "1"));
+              return duration;
+    }
+
     
     
-    
+    private void define(Context context, TextView textView) {	
+    	
+    	      switch (choice(cTextView)) {
+		      case 1:
+			         BrowserDisp b = new BrowserDisp(TextSelect.selectedText(cTextView), tvContext);
+		             b.show();
+			         break;
+		      case 2:
+		    	  	 PopupDisp p = new PopupDisp(TextSelect.selectedText(cTextView), tvContext);
+		    	  	 p.show();
+		    	  	 break;
+		      case 3:
+		             switch (duration(cTextView)) {
+		             case 1:
+		            	    ToastDisp t1 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 1500);
+		    	  	        t1.show();
+		    	  	        break;
+		             case 2:
+		            	    ToastDisp t2 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 3000);
+		    	  	        t2.show();
+		    	  	        break;
+		             case 3:
+		            	    ToastDisp t3 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 5000);
+		    	  	        t3.show();
+		    	  	        break;
+		             }
+		      }
+    }
     
     
     
@@ -236,25 +266,25 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
               share.putExtra(android.content.Intent.EXTRA_TEXT, TextSelect.selectedText(cTextView));
               context.startActivity(Intent.createChooser(share, ResourceHelper.getOwnString(context,R.string.text_share)));
     }  
+    
+    
+    
+    XC_MethodHook onWindowFocusChanged = new XC_MethodHook() {
         
-    private void define(Context context, TextView textView) {			
-    	switch (choice(cTextView)) {
-		      case 1:
-			         BrowserDisp b = new BrowserDisp(TextSelect.selectedText(cTextView), tvContext);
-		             b.show();
-			         break;
-		      case 2:
-		    	  	 PopupDisp p = new PopupDisp(TextSelect.selectedText(cTextView), tvContext);
-		    	  	 p.show();
-		    	  	 break;       
-		      case 3:
-		    	  	 ToastDisp t = new ToastDisp(TextSelect.selectedText(cTextView), tvContext);
-		    	  	 t.show();
-		    	  	 break;
-		      }
-    }    
-        
-    XC_MethodHook onCreateHook = new XC_MethodHook() {      	
+             @Override
+		     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {	        	    
+   		         if (shouldWindowFocusWait) {
+   		    	      param.setResult(null);
+   		    	      return;
+   		    	      
+   		     }	    		    
+   	    }
+    };   
+     
+    
+    
+    XC_MethodHook onCreateHook = new XC_MethodHook() {  
+    	
         	 @Override
         	 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
         		 menu = (Menu) param.args[1];
@@ -263,15 +293,19 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     };
         
     
+    
     XC_MethodHook onPrepareActionMode = new XC_MethodHook() {
   	  
-   	 @Override
-   	    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-   	      shouldWindowFocusWait = true;
-   	    }     
+   	         @Override
+   	         protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+   	             shouldWindowFocusWait = true;
+   	         }     
     };
-        
+     
+    
+    
     XC_MethodHook onItemClickedHook = new XC_MethodHook() {  	
+    	
         	 @Override
         	 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
         		 MenuItem item = (MenuItem) param.args[1];
@@ -280,8 +314,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
         		   
         		 case id1:
         			      define(tvContext, cTextView);
-        			      break;
-	               
+        			      break;    
 	             case id2:
 	            	      search(tvContext, cTextView);
 	     		          break;
@@ -289,27 +322,17 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	            	      share(tvContext, cTextView);
 	            	      break; 	        
 	            }
-        	}
+        	 }
     };    
+    
+    
     
     XC_MethodHook onDestroyActionMode = new XC_MethodHook() {
 
-        @Override
-           protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-               shouldWindowFocusWait = false;	            
-           }     
-    };
-    
-    XC_MethodHook onWindowFocusChanged = new XC_MethodHook() {
-        
-        @Override
-		    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {	        	    
-   		    if (shouldWindowFocusWait) {
-   		    	      param.setResult(null);
-   		    	      return;
-   		    	      
-   		    }	    		    
-   	    }
-    };
+             @Override
+             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                 shouldWindowFocusWait = false;	            
+             }     
+    };  
              
 }

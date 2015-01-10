@@ -2,24 +2,30 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <PreferenceCategory
-        android:key="Dictionary"
-        android:title="@string/dictionary" >
+        android:key="define"
+        android:title="@string/define" >
         
-        <com.arjerine.xdictionary.DemoListPreference
+        <com.arjerine.xdictionary.DictDisplayList
             android:key="displayModeVal"
             android:entries="@array/displayMode"
-            android:summary="@string/dictionary_display_summary"
+            android:summary="@string/define_display_summary"
             android:entryValues="@array/displayVals"
-            android:title="@string/dictionary_display" />
+            android:title="@string/define_display" />
+        
+        <com.arjerine.xdictionary.DictToastList
+            android:key="toastModeVal"
+            android:entries="@array/toastMode"
+            android:entryValues="@array/toastVals"
+            android:title="@string/define_toast" />
     </PreferenceCategory>
         
     <PreferenceCategory    
-        android:key="Test"
+        android:key="test"
         android:title="@string/test" >
         
         <com.arjerine.xdictionary.TestBox
-            text="@string/test_dict"
-            android:key="test_dict" />
+            android:key="testBox"
+            text="@string/test_box" />
     </PreferenceCategory>
         
 </PreferenceScreen>
