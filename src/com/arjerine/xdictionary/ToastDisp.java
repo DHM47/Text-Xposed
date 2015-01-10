@@ -27,10 +27,10 @@ public class ToastDisp {
 		
 		meaning_text = dict.getTopGlosses(search_word);
 		
-		if(meaning_text.equals("")) 
+		if(meaning_text.equals("")) {
 			Toast.makeText(context, "No definition found", Toast.LENGTH_LONG).show();
 		
-		else { final Toast toast = Toast.makeText(context, meaning_text,Toast.LENGTH_SHORT);
+		} else { final Toast toast = Toast.makeText(context, meaning_text,Toast.LENGTH_SHORT);
 			   toast.show();
 				   
 			   new CountDownTimer(millis,1000) {

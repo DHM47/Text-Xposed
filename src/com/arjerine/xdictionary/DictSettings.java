@@ -17,7 +17,7 @@ public class DictSettings extends PreferenceActivity {
 		c.execute();
 
 		getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);  //This line crashes the app
 	}
 	
 }

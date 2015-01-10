@@ -42,7 +42,6 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	private StringBuffer url;
 	
 	XSharedPreferences pref;
-	XSharedPreferences prefReboot;
 	
 	private Object htcObject;
 	private Drawable htcDrawableShare;
@@ -54,14 +53,13 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
-    	     prefReboot = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
+    	     pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
 		
 	}
 	
 	
 	
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
-    	     pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
     	
 		     XposedHelpers.findAndHookMethod(TextView.class, "onFocusChanged", boolean.class, int.class, Rect.class, 
 		    		                                                                   new XC_MethodHook() {
@@ -206,8 +204,8 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     
     
     private void define(Context context, TextView textView) {
-    	      int choice = Integer.parseInt(pref.getString("displayModeVal", "0"));
-    	      int duration = Integer.parseInt(pref.getString("toastModeVal", "0"));
+    	      int choice = Integer.parseInt(pref.getString("displayModeVal", "2"));
+    	      int duration = Integer.parseInt(pref.getString("toastModeVal", "1"));
     	
     	      switch (choice) {
 		      case 1:
@@ -221,11 +219,11 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		      case 3:
 		             switch (duration) {
 		             case 1:
-		            	    ToastDisp t1 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 1500);
+		            	    ToastDisp t1 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 1200);
 		    	  	        t1.show();
 		    	  	        break;
 		             case 2:
-		            	    ToastDisp t2 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 3000);
+		            	    ToastDisp t2 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 2000);
 		    	  	        t2.show();
 		    	  	        break;
 		             case 3:
