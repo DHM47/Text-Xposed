@@ -54,13 +54,14 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
-    	     pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
+    	     prefReboot = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
 		
 	}
 	
 	
 	
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
+    	     pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
     	
 		     XposedHelpers.findAndHookMethod(TextView.class, "onFocusChanged", boolean.class, int.class, Rect.class, 
 		    		                                                                   new XC_MethodHook() {
@@ -242,8 +243,9 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		             case 3:
 		            	    ToastDisp t3 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 5000);
 		    	  	        t3.show();
-		    	  	        break;
+		    	  	        break;   
 		             }
+		             break;
 		      }
     }
     
