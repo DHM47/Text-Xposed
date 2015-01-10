@@ -82,9 +82,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		    	 
 		     
 		     XposedHelpers.findAndHookMethod("android.widget.Editor", lpparam.classLoader, "onWindowFocusChanged", 
-		    		                                                    boolean.class, onWindowFocusChanged);
-		     
-		    		 
+		    		                                                    boolean.class, onWindowFocusChanged); 
 
 		     XposedHelpers.findAndHookMethod("android.widget.Editor.SelectionActionModeCallback", lpparam.classLoader, 
 		    		                       "onCreateActionMode", ActionMode.class, Menu.class, onCreateHook);   
@@ -204,24 +202,14 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	          menu.findItem(id3).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);  
          	
     }
-        
-        
-        
-    private int choice(TextView textView) {
+   
+    
+    
+    private void define(Context context, TextView textView) {
     	      int choice = Integer.parseInt(pref.getString("displayModeVal", "0"));
-              return choice;
-    }
-    
-    private int duration(TextView textView) {
-	          int duration = Integer.parseInt(pref.getString("toastModeVal", "1"));
-              return duration;
-    }
-
-    
-    
-    private void define(Context context, TextView textView) {	
+    	      int duration = Integer.parseInt(pref.getString("toastModeVal", "0"));
     	
-    	      switch (choice(cTextView)) {
+    	      switch (choice) {
 		      case 1:
 			         BrowserDisp b = new BrowserDisp(TextSelect.selectedText(cTextView), tvContext);
 		             b.show();
@@ -231,7 +219,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		    	  	 p.show();
 		    	  	 break;
 		      case 3:
-		             switch (duration(cTextView)) {
+		             switch (duration) {
 		             case 1:
 		            	    ToastDisp t1 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 1500);
 		    	  	        t1.show();

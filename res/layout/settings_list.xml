@@ -8,9 +8,9 @@
         <com.arjerine.xdictionary.DictDisplayList
             android:key="displayModeVal"
             android:entries="@array/displayMode"
-            android:summary="@string/define_display_summary"
             android:entryValues="@array/displayVals"
-            android:title="@string/define_display" />
+            android:title="@string/define_display"
+            android:summary="@string/define_display_summary" />
         
         <com.arjerine.xdictionary.DictToastList
             android:key="toastModeVal"
