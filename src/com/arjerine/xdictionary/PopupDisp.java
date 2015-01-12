@@ -91,7 +91,6 @@ public class PopupDisp {
 		d.addContentView(layout, new LinearLayout.LayoutParams(4 * width / 5, LayoutParams.WRAP_CONTENT));
 		d.setCanceledOnTouchOutside(true);
 		d.show();
-		meaning.setTextIsSelectable(true);
 	}
 	
 	

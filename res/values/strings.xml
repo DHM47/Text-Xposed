@@ -9,13 +9,21 @@
     <string name="text_share">Share using</string>
     
     
-    <string name="dictionary">Dictionary</string>
-    <string name="dictionary_display">Display</string>
-    <string name="dictionary_display_summary">Needs a reboot to take effect</string>
+    <string name="define">Define</string>
+    <string name="define_display">Display</string>
+    <string name="define_toast">Toast Duration</string>
+    <string name="summary">Needs a reboot</string>
+    
     <string name="test">Test</string>
-    <string name="test_dict">Select this to test</string>
+    <string name="test_box">Select any word from this line</string>
+    
+    
     <string name="browser">Browser</string>
     <string name="popup">Pop-up</string>
     <string name="toast">Toast</string>
+    
+    <string name="toast1">3 Seconds</string>
+    <string name="toast2">6 Seconds</string>
+    <string name="toast3">10 Seconds</string>
 
 </resources>

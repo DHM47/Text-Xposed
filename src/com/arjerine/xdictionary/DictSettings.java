@@ -3,6 +3,7 @@ package com.arjerine.xdictionary;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.view.WindowManager;
 
 public class DictSettings extends PreferenceActivity {
 	
@@ -16,6 +17,7 @@ public class DictSettings extends PreferenceActivity {
 		c.execute();
 
 		getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);  //This line crashes the app
 	}
 	
 }
