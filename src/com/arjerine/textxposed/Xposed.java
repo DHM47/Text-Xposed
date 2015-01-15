@@ -171,9 +171,9 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     	        		    	Object[] argsShare  = {htcObject,htcDrawableShare ,mClickShare ,ResourceHelper.getOwnString(tvContext,R.string.button_share)};
 								
     	        		    	try {
-									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsDefine);
-									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsSearch);
-									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsShare );
+									XposedHelpers.callMethod(param.thisObject, "addButton", argsDefine);
+									XposedHelpers.callMethod(param.thisObject, "addButton", argsSearch);
+									XposedHelpers.callMethod(param.thisObject, "addButton", argsShare );
 									
 								} catch (Exception e) {
 									XposedBridge.log(e);
