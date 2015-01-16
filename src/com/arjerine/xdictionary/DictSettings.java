@@ -13,11 +13,9 @@ public class DictSettings extends PreferenceActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		CopyTask c = new CopyTask(this, getAssets());
-		c.execute();
 
 		getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);  //This line crashes the app
+		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN); 
 	}
 	
 }
