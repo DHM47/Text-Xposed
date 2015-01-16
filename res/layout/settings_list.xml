@@ -11,14 +11,7 @@
             android:entryValues="@array/displayVals"
             android:title="@string/define_display"
             android:summary="@string/summary" />
-        
-        <com.arjerine.xdictionary.DictToastList
-            android:key="toastModeVal"
-            android:entries="@array/toastMode"
-            android:entryValues="@array/toastVals"
-            android:title="@string/define_toast"
-            android:summary="@string/summary"/>
-    </PreferenceCategory>
+   </PreferenceCategory>
         
     <PreferenceCategory    
         android:key="test"

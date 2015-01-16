@@ -3,97 +3,175 @@ package com.arjerine.xdictionary;
 
 import java.util.Locale;
 
+import com.arjerine.textxposed.R;
 import com.arjerine.textxposed.TextSelect;
 
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
+import android.database.Cursor;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.View;
 import android.view.Window;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class PopupDisp {
 
-	String search_word;
-	String meaning_text;
+	String word;
 	Context context;
-	StringBuffer m;
 	DictSearch dict;
+	
+	public static String AUTHORITY = "livio.pack.lang.en_US.DictionaryProvider";
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/dictionary");
+    public static final Uri CONTENT_URI3 = Uri.parse("content://" + AUTHORITY + "/"+ SearchManager.SUGGEST_URI_PATH_QUERY);
 
+    
 
-	public PopupDisp(String search_word, Context context) {
-		this.search_word = search_word;
+	public PopupDisp(String word, Context context) {
+		this.word = word;
 		this.context = context;
 		dict = new DictSearch();
 	}
 
-	public void show() {
+    public void show() {
+    	
+    	String black = "#101010";
+    	String green = "#2eb82e";
+    	String white = "#ffffff";
+    	
+    	LinearLayout layout = new LinearLayout(context);
 		
-		if(!dict.exists()) {
-			Toast.makeText(context, "Dictionary files not found!", Toast.LENGTH_SHORT).show();
-			return;
-		}
-
-		int width = context.getResources().getDisplayMetrics().widthPixels;
-		LinearLayout layout = new LinearLayout(context);
-
-		TextView attr = new TextView(context);
-		TextView word = new TextView(context);
-		final TextView meaning = new TextView(context);
-
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-		params.setMargins(40, 0, 40, 0);
+    	layout.setOrientation(LinearLayout.VERTICAL);
+    	
+    	int width = context.getResources().getDisplayMetrics().widthPixels;
 		
-
-		word.setTextSize(17);
-		word.setLayoutParams(params);
-		word.setTypeface(null, Typeface.BOLD);
-		word.setPadding(0, 30, 0, 20);
-		word.setText(search_word.toLowerCase(Locale.getDefault()));
-
-		meaning.setTextSize(14);
-		meaning.setSingleLine(false);
-		meaning.setLayoutParams(params);
-		meaning.setPadding(0, 0, 0, 20);
-		meaning_text = dict.getAllGlosses(search_word);
-				
-		attr.setTextSize(12);
-		attr.setTypeface(null, Typeface.ITALIC);
-		attr.setLayoutParams(params); 
-		attr.setPadding(0, 0, 0, 20);
-		attr.setText("~ from Wiktionary, Creative Commons Attribution/Share-Alike License");
+		if(!dict.isPackageInstalled("livio.pack.lang.en_US", context)) {
+			
+			WebView warning = new WebView(context);
+    		WebSettings settings = warning.getSettings();
+	    
+    		warning.setLayoutParams(params);
+    		warning.setVerticalScrollBarEnabled(false);
+    		warning.setHorizontalScrollBarEnabled(false);
+	    	settings.setDefaultFontSize(17);
 		
-				
-		if(meaning_text.equals("")) {
-			meaning.setText("No definition found");
+	    	String html = "<!doctype HTML>"+ 
+	    			      "<html>" + 
+				      
+                          "<style>" + 
+                          "a {color:" + green + ";}" + 
+                          "body {background-color:" + white + "; text-align:center;}" +
+                          "</style>" +
+				      
+		    		      "<body>" +
+                          "<b>Define</b> needs Livio dictionary to work.<br>Get it from Play Store!<br>" +
+		    		      "<a href=" + "https://play.google.com/store/apps/details?id=livio.pack.lang.en_US&hl=en" + 
+                                   ">English</a><br>" +
+		    		      "(Other languages to be added soon)" +
+		    		      "</body>" + 
+				      
+		    		      "</html>";
+	    	
+	    	warning.loadDataWithBaseURL(html, html, "text/html", "utf-8", null);
+			
+	    	layout.addView(warning);
+			
+	    	Dialog d = new Dialog(context);
+    		d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+    		
+    		d.addContentView(layout, new LinearLayout.LayoutParams(8 * width / 9, LayoutParams.WRAP_CONTENT));
+    		d.setCanceledOnTouchOutside(true);
+     		d.show();
 		}
-		else {
-			meaning.setText(dict.getAllGlosses(search_word));	
+		
+	    	else {
+
+	    	Cursor cursor = context.getContentResolver().query(CONTENT_URI, null, null, new String[] {word}, null);
+		
+		
+	    	if ((cursor != null) && cursor.moveToFirst()) {
+			
+		    	TextView wordDisp = new TextView(context);
+		        int dIndex = cursor.getColumnIndexOrThrow(SearchManager.SUGGEST_COLUMN_TEXT_2);
+			
+	    		wordDisp.setTextSize(17);
+	    		wordDisp.setLayoutParams(params);
+	    		wordDisp.setTypeface(null, Typeface.BOLD);
+		    	wordDisp.setPadding(10, 40, 0, 20);
+		    	wordDisp.setTextColor(0xff2eb82e);
+		    	wordDisp.setBackgroundColor(0xffffffff);
+		        wordDisp.setText(word.toUpperCase(Locale.getDefault()));
+			
+		    
+	    	    WebView meaning = new WebView(context);
+	    		WebSettings settings = meaning.getSettings();
+		    
+		    	meaning.setLayoutParams(params);
+		    	meaning.setVerticalScrollBarEnabled(false);
+		    	meaning.setHorizontalScrollBarEnabled(false);
+	    		meaning.setWebViewClient(myWebClient);
+		    	settings.setDefaultFontSize(14);
+	    		settings.setBuiltInZoomControls(true);
+	    		settings.setDisplayZoomControls(false);
+			
+		    	String html = "<!doctype HTML>"+ 
+		    			      "<html>" + 
+					      
+                              "<style>" + 
+                              "a {color:" + black + "; text-decoration:none;}" + 
+                              "body {background-color:" + white + ";}" +
+                              "html {font-family: sans-serif-light;}" +
+                              "</style>" +
+					      
+			    		      "<body>" +
+                              cursor.getString(dIndex) + 
+			    		      "</body>" + 
+					      
+			    		      "</html>";
+			
+		    	meaning.loadDataWithBaseURL(cursor.getString(dIndex), html, "text/html", "utf-8", null);
+		  	
+			
+		    	layout.addView(wordDisp);
+		    	layout.addView(meaning);
+		    
+			
+		        Dialog d = new Dialog(context);
+	    		d.requestWindowFeature(Window.FEATURE_NO_TITLE);
+	    		
+	    		d.addContentView(layout, new LinearLayout.LayoutParams(8 * width / 9, LayoutParams.WRAP_CONTENT));
+	    		d.setCanceledOnTouchOutside(true);
+	     		d.show();
+			
+			
+		    } else {
+		        Toast.makeText(context, "Oops! Couldn't find that.", Toast.LENGTH_LONG).show();
+	    	}
+		
 		}
 		
-		meaning.setMovementMethod(new ScrollingMovementMethod());
-		
-		layout.setOrientation(1);
-		layout.addView(word);
-		layout.addView(meaning);
-		layout.addView(attr);
-
-		Dialog d = new Dialog(context);
-		d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-		d.addContentView(layout, new LinearLayout.LayoutParams(4 * width / 5, LayoutParams.WRAP_CONTENT));
-		d.setCanceledOnTouchOutside(true);
-		d.show();
 	}
 	
 	
-	
-	
+    WebViewClient myWebClient = new WebViewClient() {
+    	@Override
+        public boolean shouldOverrideUrlLoading(WebView  view, String  url)  {
+            return true;
+        }
+    };
+    
 }
