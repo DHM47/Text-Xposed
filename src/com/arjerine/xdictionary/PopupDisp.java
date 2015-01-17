@@ -55,8 +55,10 @@ public class PopupDisp {
     	LinearLayout layout = new LinearLayout(context);
 		
 		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		params.setMargins(20, 0, 20, 0);
     	layout.setOrientation(LinearLayout.VERTICAL);
     	
+    	int height = context.getResources().getDisplayMetrics().heightPixels;
     	int width = context.getResources().getDisplayMetrics().widthPixels;
 		
 		if(!dict.isPackageInstalled("livio.pack.lang.en_US", context)) {
@@ -153,7 +155,8 @@ public class PopupDisp {
 		        Dialog d = new Dialog(context);
 	    		d.requestWindowFeature(Window.FEATURE_NO_TITLE);
 	    		
-	    		d.addContentView(layout, new LinearLayout.LayoutParams(8 * width / 9, LayoutParams.WRAP_CONTENT));
+	    		d.addContentView(layout, new LinearLayout.LayoutParams(8 * width / 9, 4 * height / 5));
+	    		d.getWindow().setBackgroundDrawableResource(android.R.color.white);
 	    		d.setCanceledOnTouchOutside(true);
 	     		d.show();
 			
