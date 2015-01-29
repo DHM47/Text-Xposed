@@ -1,11 +1,13 @@
-package com.arjerine.xdictionary;
+//Possibly deprecated
 
+package com.arjerine.xdictionary;
+/*
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.widget.Toast;
-
+*/
 public class ToastDisp {
-
+/*
 	String search_word, meaning_text;
 	Context context;
 	DictSearch dict;
@@ -40,4 +42,5 @@ public class ToastDisp {
 	    }
 				
 	}
+	*/
 }

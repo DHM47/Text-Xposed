@@ -171,9 +171,9 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     	        		    	Object[] argsShare  = {htcObject,htcDrawableShare ,mClickShare ,ResourceHelper.getOwnString(tvContext,R.string.button_share)};
 								
     	        		    	try {
-									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsDefine);
-									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsSearch);
-									XposedBridge.invokeOriginalMethod(param.method, param.thisObject, argsShare );
+									XposedHelpers.callMethod(param.thisObject, "addButton", argsDefine);
+									XposedHelpers.callMethod(param.thisObject, "addButton", argsSearch);
+									XposedHelpers.callMethod(param.thisObject, "addButton", argsShare );
 									
 								} catch (Exception e) {
 									XposedBridge.log(e);
@@ -205,7 +205,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     
     private void define(Context context, TextView textView) {
     	      int choice = Integer.parseInt(pref.getString("displayModeVal", "2"));
-    	      int duration = Integer.parseInt(pref.getString("toastModeVal", "1"));
+    	    //int duration = Integer.parseInt(pref.getString("toastModeVal", "1"));
     	
     	      switch (choice) {
 		      case 1:
@@ -216,6 +216,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		    	  	 PopupDisp p = new PopupDisp(TextSelect.selectedText(cTextView), tvContext);
 		    	  	 p.show();
 		    	  	 break;
+		     /*  	 
 		      case 3:
 		             switch (duration) {
 		             case 1:
@@ -232,6 +233,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		    	  	        break;   
 		             }
 		             break;
+		             */
 		      }
     }
     

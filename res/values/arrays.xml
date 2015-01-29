@@ -3,13 +3,11 @@
     <string-array name="displayMode">
         <item name="@string/browser">Browser</item>
         <item name="@string/popup">Pop-up</item>
-        <item name="@string/toast">Toast</item>
     </string-array>
     
     <string-array name="displayVals">
         <item>1</item>
         <item>2</item>
-        <item>3</item>
     </string-array>
     
     <string-array name="toastMode">
