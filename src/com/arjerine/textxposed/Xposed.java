@@ -128,8 +128,9 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		     }
 	     
 	
-		     
-	         // HTC Compatibility
+		       /////////////////////////////
+	          //    HTC Compatibility    //
+		     /////////////////////////////
 		     
              if (Build.MANUFACTURER.toLowerCase(Locale.getDefault()).contains("htc")) {
             	 
@@ -145,9 +146,9 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     	        		    	htcAdded=true;
     	        		    	htcObject = param.args[0];
     	        		    	
-    	        		    	htcDrawableDefine=ResourceHelper.getOwnDrawable(tvContext, R.drawable.define);
-    	        		    	htcDrawableSearch=ResourceHelper.getOwnDrawable(tvContext, R.drawable.search);
-    	        		    	htcDrawableShare =ResourceHelper.getOwnDrawable(tvContext, R.drawable.share );
+    	        		    	htcDrawableDefine = ResourceHelper.getOwnDrawable(tvContext, R.drawable.define);
+    	        		    	htcDrawableSearch = ResourceHelper.getOwnDrawable(tvContext, R.drawable.search);
+    	        		    	htcDrawableShare  = ResourceHelper.getOwnDrawable(tvContext, R.drawable.share );
     	        		    	
     	        		    	View.OnClickListener mClickDefine = new OnClickListener() {
     	        		    		@Override
@@ -187,6 +188,39 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     	        		    }
     	        	    }  
                  });				
+             }
+             
+             
+             
+               //////////////////////////////
+              //       Chrome Patch       //
+             //////////////////////////////
+             
+             if (lpparam.packageName.contains("chrome")) {
+            	 
+            	 XposedHelpers.findAndHookMethod("org.chromium.content.browser.SelectActionModeCallback", lpparam.classLoader,
+            			            "onCreateActionMode", ActionMode.class, Menu.class, new XC_MethodHook() {
+            		 
+            		 @Override
+            		    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+            			    Object[] args = {};
+            			    Context cContext = (Context) XposedHelpers.findMethodBestMatch(XposedHelpers.findClass("org.chromium.content.browser.SelectActionModeCallback", 
+            			    		       lpparam.classLoader), "getContext").invoke(param.thisObject, args);
+            			    
+            			    int cId1 = cContext.getResources().getIdentifier("select_action_menu_search", "id", "com.android.chrome");
+            			    int cId2 = cContext.getResources().getIdentifier("select_action_menu_share", "id", "com.android.chrome");
+            			    
+            			    menu.add(android.view.Menu.NONE, cId1, android.view.Menu.NONE, "Search");
+            			    menu.findItem(cId1).setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_NEVER);
+            			    
+            			    menu.add(android.view.Menu.NONE, cId2, android.view.Menu.NONE, "Share");
+            			    menu.findItem(cId2).setShowAsAction(android.view.MenuItem.SHOW_AS_ACTION_NEVER);
+            			    
+            		 }
+            		 
+            	 });
+            	 
+            	 
              }
     }
     
