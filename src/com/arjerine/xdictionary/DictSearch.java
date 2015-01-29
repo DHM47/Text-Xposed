@@ -7,10 +7,10 @@ import android.content.pm.PackageManager.NameNotFoundException;
 
 public class DictSearch {
 	
-	public boolean isPackageInstalled(String packagename, Context context) {
+	public boolean isPackageInstalled(String packageName, Context context) {
 	    PackageManager pm = context.getPackageManager();
 	    try {
-	        pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
+	        pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
 	        return true;
 	    } catch (NameNotFoundException e) {
 	        return false;

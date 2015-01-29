@@ -1,4 +1,4 @@
-package com.arjerine.xdictionary;
+package com.arjerine.textxposed;
 
 
 import android.annotation.SuppressLint;

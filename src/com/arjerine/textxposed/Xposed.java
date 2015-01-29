@@ -1,10 +1,7 @@
 package com.arjerine.textxposed;
 
 
-import com.arjerine.textxposed.R;
-import com.arjerine.xdictionary.BrowserDisp;
-import com.arjerine.xdictionary.PopupDisp;
-import com.arjerine.xdictionary.ToastDisp;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,11 +11,17 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.view.ActionMode;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View.OnClickListener;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
+
+import com.arjerine.xdictionary.DictSearch;
+import com.arjerine.xdictionary.DispBrowser;
+import com.arjerine.xdictionary.DispPopup;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
@@ -42,6 +45,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	private StringBuffer url;
 	
 	XSharedPreferences pref;
+	XSharedPreferences prefReboot;
 	
 	private Object htcObject;
 	private Drawable htcDrawableShare;
@@ -53,14 +57,15 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 	
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
-    	     pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
+    	     prefReboot = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
 		
 	}
 	
 	
 	
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
-    	
+    	     pref = new XSharedPreferences("com.arjerine.textxposed", "my_prefs");
+    	     
 		     XposedHelpers.findAndHookMethod(TextView.class, "onFocusChanged", boolean.class, int.class, Rect.class, 
 		    		                                                                   new XC_MethodHook() {
 	    	                      
@@ -126,16 +131,14 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 		     
 	         // HTC Compatibility
 		     
-             if (Build.MANUFACTURER.toLowerCase().contains("htc")) {
+             if (Build.MANUFACTURER.toLowerCase(Locale.getDefault()).contains("htc")) {
             	 
     	         XposedHelpers.findAndHookMethod("com.htc.quickselection.HtcQuickSelectionWindow", lpparam.classLoader, 
-    	        		               "addButton", Object.class,Drawable.class,View.OnClickListener.class,
+    	        		                         "addButton", Object.class,Drawable.class,View.OnClickListener.class,
     	        		                                                   String.class,new XC_MethodHook() {
     	        	 @Override
     	        	    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
     	        		    String hString = (String) param.args[3];
-    	        		    //TextView hTextView = (TextView) param.args[0];  How did you know this ?
-    	        		    //final Context hContext = hTextView.getContext();
 	        		    	
 	        		    	
     	        		    if (Resources.getSystem().getString(android.R.string.copy).equals(hString) && !htcAdded) {//Use Copy because paste is not always available. 
@@ -186,6 +189,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                  });				
              }
     }
+    
              
              
     private void menuButtons(Menu menu) {
@@ -203,38 +207,178 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
    
     
     
-    private void define(Context context, TextView textView) {
-    	      int choice = Integer.parseInt(pref.getString("displayModeVal", "2"));
-    	    //int duration = Integer.parseInt(pref.getString("toastModeVal", "1"));
+    private boolean installed(Context context) {
+    	int languageChoice = Integer.parseInt(prefReboot.getString("languageModeVal", "0"));
+    	DictSearch dict = new DictSearch();
+    	boolean installed = false;
     	
-    	      switch (choice) {
+		switch(languageChoice) {
+    	case 1:
+    		   installed = dict.isPackageInstalled("livio.pack.lang.en_US", context);
+    		   break;
+    	case 2:
+    		   installed = dict.isPackageInstalled("livio.pack.lang.fr_FR", context);
+    		   break;
+    	case 3:
+    		   installed = dict.isPackageInstalled("livio.pack.lang.de_DE", context); 
+    		   break;
+    	case 4:
+    		   installed = dict.isPackageInstalled("livio.pack.lang.it_IT", context); 
+    		   break;
+    	case 5:
+    		   installed = dict.isPackageInstalled("livio.pack.lang.en_US", context);
+    		   break;
+    	}
+		return installed;
+    }
+    
+    private String authority() {
+    	int authorityChoice = Integer.parseInt(prefReboot.getString("languageModeVal", "0"));
+    	String authority = null;
+    	
+		switch(authorityChoice) {
+    	case 1:
+    		   authority = "livio.pack.lang.en_US.DictionaryProvider";
+    		   break;
+    	case 2:
+    		   authority = "livio.pack.lang.fr_FR.DictionaryProvider";
+    		   break;
+    	case 3:
+    		   authority = "livio.pack.lang.de_DE.DictionaryProvider";
+    		   break;
+    	case 4:
+    		   authority = "livio.pack.lang.it_IT.DictionaryProvider";
+    		   break;
+    	case 5:
+    	       authority = "livio.pack.lang.es_ES.DictionaryProvider";
+    		   break;
+    	}
+		return authority;
+    }
+    
+    private int animation() {
+    	int animationChoice = Integer.parseInt(prefReboot.getString("gravityModeVal", "0"));
+    	int animation = 0;
+    	
+    	switch (animationChoice) {
+    	case 1:
+    		   animation = R.style.DefineDialogTopAnimation;
+    		   break;
+    	case 2:
+    		   animation = R.style.DefineDialogTopAnimation;
+    		   break;
+    	case 3:
+    		   animation = R.style.DefineDialogBottomAnimation;
+    		   break;
+    	}
+    	return animation;
+    }
+    
+    private int gravity() {
+    	int gravityChoice = Integer.parseInt(prefReboot.getString("gravityModeVal", "0"));
+    	int gravity = 0;
+    	
+		switch(gravityChoice) {
+    	case 1:
+    		   gravity = Gravity.CENTER;
+    		   break;
+    	case 2:
+    		   gravity = Gravity.TOP;
+    		   break;
+    	case 3:
+    		   gravity = Gravity.BOTTOM;
+    		   break;
+    	}
+		return gravity;
+    }
+    
+    private int height(Context context) {
+    	int heightChoice = Integer.parseInt(prefReboot.getString("gravityModeVal", "0"));
+    	int tHeight = context.getResources().getDisplayMetrics().heightPixels;
+    	int height = 0;
+    	
+    	switch(heightChoice) {
+    	case 1:
+    		   height = 7 * tHeight / 10;
+    		   break;
+    	case 2:
+    	       height = 9 * tHeight / 20;
+    	       break;
+    	case 3:
+    		   height = 9 * tHeight / 20;
+    		   break;
+    	}
+    	
+    	return height;
+    }
+    
+    private int width(Context context) {
+    	int widthChoice = Integer.parseInt(prefReboot.getString("gravityModeVal", "0")); 
+    	int tWidth = context.getResources().getDisplayMetrics().widthPixels;
+    	int width = 0;
+    	
+    	switch(widthChoice) {
+    	case 1:
+    		   width = 8 * tWidth / 9;
+    		   break;
+    	case 2:
+    		   width = tWidth;
+    		   break;
+    	case 3:
+    		   width = tWidth;
+    		   break;
+    	}
+    	
+    	return width;
+    }
+    /*
+    private int duration() {
+    	int durationChoice = Integer.parseInt(prefReboot.getString("durationModeVal", "0"));
+    	int duration = 0;
+    	
+		switch(durationChoice) {
+    	case 1:
+    		   duration = 999999999;
+    		   break;
+    	case 2:
+    		   duration = 6000;
+    		   break;
+    	case 3:
+    		   duration = 10000;
+    		   break;
+    	case 4:
+    		   duration = 15000;
+    		   break;
+    	}
+		return duration;
+    }
+    */
+    
+    
+    private void define(Context context, TextView textView) {
+    	      DispPopup p = new DispPopup(TextSelect.selectedText(textView), context, installed(context), authority(),
+                                                                    animation(), gravity(), height(context), width(context));
+              p.show();
+
+    	      /*
+    	      switch(choice) {
 		      case 1:
-			         BrowserDisp b = new BrowserDisp(TextSelect.selectedText(cTextView), tvContext);
+			         DispBrowser b = new DispBrowser(TextSelect.selectedText(textView), context);
 		             b.show();
 			         break;
+			         
 		      case 2:
-		    	  	 PopupDisp p = new PopupDisp(TextSelect.selectedText(cTextView), tvContext);
+		    	     DispPopup p = new DispPopup(TextSelect.selectedText(textView), context, installed(context), authority(),
+		    	    		                                   animation(), duration(), gravity(), height(context), width(context));
 		    	  	 p.show();
 		    	  	 break;
-		     /*  	 
+		    	  		    
+		       	 
 		      case 3:
-		             switch (duration) {
-		             case 1:
-		            	    ToastDisp t1 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 1200);
-		    	  	        t1.show();
-		    	  	        break;
-		             case 2:
-		            	    ToastDisp t2 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 2000);
-		    	  	        t2.show();
-		    	  	        break;
-		             case 3:
-		            	    ToastDisp t3 = new ToastDisp(TextSelect.selectedText(cTextView), tvContext, 5000);
-		    	  	        t3.show();
-		    	  	        break;   
-		             }
-		             break;
-		             */
-		      }
+		             ToastDisp t = new ToastDisp(TextSelect.selectedText(textView), context);
+		    	  	 t.show();
+		    	     break; 
+		      }*/
     }
     
     
@@ -242,7 +386,7 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     private void search(Context context, TextView textView) {     	
         	  url = new StringBuffer();
               url.append("https://www.google.com/search?q=");
-              url.append(TextSelect.selectedText(cTextView));
+              url.append(TextSelect.selectedText(textView));
         	
         	  Intent search = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
               context.startActivity(search);	            
@@ -253,8 +397,8 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     private void share(Context context, TextView textView) {			
         	  Intent share = new Intent(Intent.ACTION_SEND);
               share.setType("text/plain");
-              share.putExtra(android.content.Intent.EXTRA_TEXT, TextSelect.selectedText(cTextView));
-              context.startActivity(Intent.createChooser(share, ResourceHelper.getOwnString(context,R.string.text_share)));
+              share.putExtra(android.content.Intent.EXTRA_TEXT, TextSelect.selectedText(textView));
+              context.startActivity(Intent.createChooser(share, ResourceHelper.getOwnString(context,R.string.dialog_share)));
     }  
     
     

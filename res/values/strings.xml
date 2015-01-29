@@ -3,27 +3,37 @@
     <string name="app_name">Text Xposed</string>
     <string name="xposed_desc">Select text for a quick definition, to search using browser or to share!</string>
     
+    
     <string name="button_define">Define</string>
     <string name="button_share">Share</string>
     <string name="button_search">Search</string>    
-    <string name="text_share">Share using</string>
+    <string name="dialog_share">Share using</string>
+    
     
     
     <string name="define">Define</string>
-    <string name="define_display">Display</string>
-    <string name="define_toast">Toast Duration</string>
+    <string name="popup_language">Language</string>
+    <string name="popup_gravity">Gravity</string>
+    <string name="popup_timeout">Timeout</string>
     <string name="summary">Needs a reboot</string>
     
     <string name="test">Test</string>
-    <string name="test_box">Select any word from this line</string>
+    <string name="text_test">test - essayer - testen - provare - probar</string>
+    
     
     
     <string name="browser">Browser</string>
     <string name="popup">Pop-up</string>
     <string name="toast">Toast</string>
     
-    <string name="toast1">3 Seconds</string>
-    <string name="toast2">6 Seconds</string>
-    <string name="toast3">10 Seconds</string>
+    <string name="English">English</string>
+    <string name="French">French</string>
+    <string name="German">German</string>
+    <string name="Italian">Italian</string>
+    <string name="Spanish">Spanish</string>
+    
+    <string name="popupB">Bottom</string>
+    <string name="popupC">Center</string>
+    <string name="popupT">Top</string>
 
 </resources>

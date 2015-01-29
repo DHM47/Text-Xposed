@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-public class BrowserDisp {
+public class DispBrowser {
 
 	static int MAX_URI_LENGTH = 200;
 	StringBuffer url;
@@ -12,7 +12,7 @@ public class BrowserDisp {
 	Context context;
 	Intent browserIntent;
 	
-	public BrowserDisp(String search_word, Context context) {	
+	public DispBrowser(String search_word, Context context) {	
 		this.search_word = search_word;
 		this.context = context;
 	}

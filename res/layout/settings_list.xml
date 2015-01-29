@@ -5,21 +5,29 @@
         android:key="define"
         android:title="@string/define" >
         
-        <com.arjerine.xdictionary.DictDisplayList
-            android:key="displayModeVal"
-            android:entries="@array/displayMode"
-            android:entryValues="@array/displayVals"
-            android:title="@string/define_display"
-            android:summary="@string/summary" />
+        <com.arjerine.xdictionary.ListPopupLanguage
+            android:key="languageModeVal"
+            android:entries="@array/languageMode"
+            android:entryValues="@array/languageVals"
+            android:title="@string/popup_language"
+            android:defaultValue="1" />
+        
+        <com.arjerine.xdictionary.ListPopupGravity
+            android:key="gravityModeVal"
+            android:entries="@array/gravityMode"
+            android:entryValues="@array/gravityVals"
+            android:title="@string/popup_gravity" 
+            android:defaultValue="1" />
    </PreferenceCategory>
         
-    <PreferenceCategory    
+   <PreferenceCategory    
         android:key="test"
         android:title="@string/test" >
         
-        <com.arjerine.xdictionary.TestBox
+        <com.arjerine.textxposed.TestBox
             android:key="testBox"
-            text="@string/test_box" />
-    </PreferenceCategory>
+            text="@string/text_test" />
+   </PreferenceCategory>
+   
         
 </PreferenceScreen>
