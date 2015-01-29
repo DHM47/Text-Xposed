@@ -1,24 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="displayMode">
-        <item name="@string/browser">Browser</item>
-        <item name="@string/popup">Pop-up</item>
+    
+    <string-array name="languageMode">
+        <item name="@string/English">English</item>
+        <item name="@string/French">French</item>
+        <item name="@string/German">German</item>
+        <item name="@string/Italian">Italian</item>
+        <item name="@string/Spanish">Spanish</item>
     </string-array>
     
-    <string-array name="displayVals">
-        <item>1</item>
-        <item>2</item>
-    </string-array>
-    
-    <string-array name="toastMode">
-        <item name="@string/toast1">3 Seconds</item>
-        <item name="@string/toast2">6 Seconds</item>
-        <item name="@string/toast3">10 Seconds</item>
-    </string-array>
-    
-    <string-array name="toastVals">
+    <string-array name="languageVals">
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    
+    
+    
+    <string-array name="gravityMode">
+        <item name="@string/popupC">Center</item>
+        <item name="@string/popupT">Top</item>
+        <item name="@string/popupB">Bottom</item>
+    </string-array>
+    
+    <string-array name="gravityVals">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+    
+    
+    
+    <string-array name="durationMode">
+        <item name="@string/duration0">Disable</item>
+        <item name="@string/duration6">6 Seconds</item>
+        <item name="@string/duration10">10 Seconds</item>
+        <item name="@string/duration15">15 Seconds</item>
+    </string-array>
+    
+    <string-array name="durationVals">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
     </string-array>
 </resources>

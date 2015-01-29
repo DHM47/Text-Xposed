@@ -1,11 +1,11 @@
-package com.arjerine.xdictionary;
+package com.arjerine.textxposed;
 
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.WindowManager;
 
-public class DictSettings extends PreferenceActivity {
+public class Settings extends PreferenceActivity {
 	
 	int mHint;
 	
@@ -15,7 +15,6 @@ public class DictSettings extends PreferenceActivity {
 		super.onCreate(savedInstanceState);
 
 		getFragmentManager().beginTransaction().replace(android.R.id.content, new SettingsFragment()).commit();
-		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN); 
 	}
 	
 }

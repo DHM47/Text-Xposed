@@ -6,9 +6,11 @@ import android.preference.ListPreference;
 import android.util.AttributeSet;
 import android.widget.ListAdapter;
 
-public class DictToastList extends ListPreference {
+import com.arjerine.textxposed.ModeArrayAdapter;
+
+public class ListPopupDuration extends ListPreference {
 	
-	public DictToastList(Context context, AttributeSet attrs) {
+	public ListPopupDuration(Context context, AttributeSet attrs) {
 		super(context,attrs);
 	}
 	

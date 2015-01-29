@@ -25,8 +25,21 @@
     
     <style name="ActionBar"
            parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:background">@color/blue</item>
+        <item name="android:background">@color/gray</item>
         <item name="android:icon">@android:color/transparent</item>
+    </style>
+    
+    
+    
+    <style name="DefineDialogBottomAnimation">
+        <item name="android:windowEnterAnimation">@anim/open_slide_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_down</item>
+    </style>    
+        
+    
+    <style name="DefineDialogTopAnimation">
+        <item name="android:windowEnterAnimation">@anim/open_slide_down</item>
+        <item name="android:windowExitAnimation">@anim/slide_up</item>    
     </style>
     
 </resources>

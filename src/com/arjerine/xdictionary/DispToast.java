@@ -6,7 +6,7 @@ import android.content.Context;
 import android.os.CountDownTimer;
 import android.widget.Toast;
 */
-public class ToastDisp {
+public class DispToast {
 /*
 	String search_word, meaning_text;
 	Context context;
