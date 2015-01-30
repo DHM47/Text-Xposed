@@ -390,8 +390,9 @@ public class Xposed implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     
     
     private void define(Context context, TextView textView) {
-    	      DispPopup p = new DispPopup(TextSelect.selectedText(textView), context, installed(context), authority(),
-                                                                    animation(), gravity(), height(context), width(context));
+    	int languageChoice = Integer.parseInt(prefReboot.getString("languageModeVal", "0"));
+    	      DispPopup p = new DispPopup(TextSelect.selectedText(textView), context,
+                                                                    animation(), gravity(), height(context), width(context),languageChoice);
               p.show();
 
     	      /*
